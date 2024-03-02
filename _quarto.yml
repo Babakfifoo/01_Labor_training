@@ -1,0 +1,25 @@
+project:
+  type: website
+  render: 
+    - notebooks/COVID_time_analysis.qmd
+
+website:
+  title: "."
+  navbar:
+    right:
+      - about.qmd
+      - icon: github
+        href: https://github.com/
+      - icon: twitter
+        href: https://twitter.com
+format:
+  html:
+    theme: yeti
+    css: styles.css
+
+    grid:
+      body-width: 1800px
+    anchor-sections: true
+    code-fold: true
+    code-overflow: wrap
+

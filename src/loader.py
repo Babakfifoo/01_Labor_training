@@ -4,7 +4,7 @@ sys.path.append('../src/')
 import json
 import requests
 import pandas as pd
-from config import STATFI_API_URL
+import config as cfg
 
 from pyjstat import pyjstat
 from dataclasses import dataclass
@@ -20,17 +20,7 @@ class statfi_loader:
     def __init__(self, config) -> None:
         
         self.config = config
-        self.api_url = STATFI_API_URL + config.url
-
-    def load_query(self) -> dict:
-        """loading the query from the json file
-
-        Returns:
-            dict: the query for the API
-        """        
-        with open(self.config.query, "r", encoding='utf-8') as f:
-            query = json.loads(f.read())
-        return query
+        self.api_url = cfg.STATFI_API_URL + config.url
 
     def load_data(self) -> pd.DataFrame:
         """Loading the data from the API
@@ -38,7 +28,7 @@ class statfi_loader:
         Returns:
             pd.DataFrame: a dataframe containing the requested data
         """
-        r = requests.post(self.api_url, json=self.load_query())
+        r = requests.post(self.api_url, json=cfg.STARTUP_QUERY)
         data = pyjstat.Dataset.read(r.text).write("dataframe")
         
         return data
@@ -48,7 +38,7 @@ class startupMacro:
     def __init__(self) -> None:
         self.config = statfiConfig(
             # the query file (json file with the query for the API)
-            query= "../query/startup_macro.json",
+            query= "query/startup_total.json",
             url= "tyonv/statfin_tyonv_pxt_12u6.px"
         )
 

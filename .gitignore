@@ -3,6 +3,13 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Quarto:
+**/.jupyter_cache/
+.snapshots/
+.quarto/
+.idea/
+*.ipynb_checkpoints/
+
 # Datas:
 
 *.csv
