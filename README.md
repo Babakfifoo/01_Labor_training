@@ -21,4 +21,4 @@ Selections:
 5. Startup grant for non-unemployed + Startup grant for unemployed
 6. 2019 January – 2023 December
 
-Analysis notebook: [HERE](./_site/notebooks/COVID_time_analysis.html)
+Analysis notebook: [HERE](./results/notebooks/COVID_time_analysis.html)
