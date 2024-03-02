@@ -1,5 +1,6 @@
 project:
   type: website
+  output-dir: results
   render: 
     - notebooks/COVID_time_analysis.qmd
 

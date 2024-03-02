@@ -7,7 +7,7 @@ __pycache__/
 **/.jupyter_cache/
 .snapshots/
 .quarto/
-.idea/
+
 
 # Datas:
 
@@ -24,7 +24,6 @@ __pycache__/
 *.xls*
 *.doc*
 
-*.html
 .vscode
 *.db
 *.pbf
@@ -33,7 +32,7 @@ __pycache__/
 *.ster
 *.smcl
 *.stswp
-*.json
+
 # Other files:
 
 *.parquet
@@ -43,7 +42,7 @@ __pycache__/
 *.gpkg
 *.gpkg-shm
 *.gpkg-wal
-*.qmd
+
 *.dbf
 *.prj
 *.sbn
@@ -194,16 +193,3 @@ vignettes/*.pdf
 # Shiny token, see https://shiny.rstudio.com/articles/shinyapps.html
 rsconnect/
 
-# Mac
-.DS_Store
-desktop.ini
-*.DAT
-*.ID
-*.MAP
-*.TAB
-
-*.css
-*.js
-*.woff
-
-/.quarto/

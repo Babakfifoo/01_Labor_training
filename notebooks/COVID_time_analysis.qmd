@@ -1,0 +1,176 @@
+---
+title: "Startup COVID era analysis"
+author: "Babak Fi Foo"
+toc: true
+number-sections: true
+execute:
+  cache: true
+---
+
+```{python}
+import sys
+sys.path.append('../src/')
+
+import loader
+import numpy as np
+import pandas as pd
+from datetime import datetime as dt
+
+from IPython.display import Markdown, display
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+
+from arch.unitroot.unitroot import DFGLS
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+import statsmodels.api as sm
+from statsmodels.tsa.arima.model import ARIMA, ARIMAResults
+
+plt.rcParams['font.family'] = 'Adobe Caslon Pro'
+plt.rcParams['font.size'] = 12
+
+import warnings
+warnings.filterwarnings("ignore")
+
+print("setting up the data...")
+
+macro_data = loader.startupMacro()
+data = macro_data.load()
+
+```
+
+# Testing for unit root
+
+The whole duration of the data is used for this test statistics to avoid any potential bias.
+
+```{python}
+
+plt.figure(figsize=(12, 6))
+plt.grid(True, which="both", ls="--", lw=0.5)
+
+COVID = dt.strptime("2020-05-01", '%Y-%m-%d')
+NORMAL = dt.strptime("2022-02-01", '%Y-%m-%d')
+
+ax = plt.gca()
+ax.xaxis.set_major_locator(mdates.YearLocator())
+ax.xaxis.set_minor_locator(mdates.MonthLocator(interval=3))
+
+plt.xlim(
+	dt.strptime("2006-01-01", '%Y-%m-%d'), 
+	dt.strptime("2024-01-01", '%Y-%m-%d')
+	)
+
+plt.axvline(x=COVID, color='#AAAAAA', linestyle='--',  label='COVID-19 Restriction established', lw=1.5)
+plt.axvline(x=NORMAL, color='#888888', linestyle='-.',  label='COVID-19 Restriction lifted', lw=1.5)
+sns.lineplot(data=data.loc[:,[
+	"Start-up grant for non-unemployed",
+	"Start-up grant for unemployed"
+]], palette=["#8ecae6","#ffb703"], dashes=False, ax=ax)
+
+
+plt.show()
+
+```
+
+The DF-GLS test for unit-root indicates that both series are affected by unit-root at their 7th lag, and cannot reject the existance of the unit-root.
+
+```{python}
+col1 = "Start-up grant for non-unemployed"
+test_1 = DFGLS(data[col1], max_lags=12, method="bic").summary()
+
+print(test_1.as_text())
+```
+
+```{python}
+col2 = "Start-up grant for unemployed"
+test_2 = DFGLS(data[col2], max_lags=12, method="bic").summary()
+print(test_2.as_text())
+```
+First differencing the series resulted in a stationary series. This means that the unit-root is not cause by trend, nor drift. Hence the plausable datagenerating process is:
+
+$$ y_{t} = \alpha_0 + \alpha_1 y_{t-1} + \varepsilon_{t} $$
+
+Therefore further uni-variate time-series analysis could be implemented.
+
+```{python}
+col1 = "Start-up grant for non-unemployed"
+test_1 = DFGLS(data[col1].diff().dropna(), max_lags=12, method="bic").summary()
+print(test_1.as_text())
+```
+
+```{python}
+col2 = "Start-up grant for unemployed"
+test_2 = DFGLS(data[col2].diff().dropna(), max_lags=12, method="bic").summary()
+print(test_2.as_text())
+```
+
+# Start-up grant for unemployed (count)
+
+The autocorrelation (ACF) and partial autocorrelation (PACF) plots shows the behaviour of a autoregressive model (AR). 
+
+```{python}
+model_df = data.copy()
+model_df.loc[:,"d_unemp"] = model_df["Start-up grant for unemployed"].diff()
+fig, ax = plt.subplots(1,2, figsize=(12, 4))
+
+plot_pacf(model_df["d_unemp"].dropna(), lags=24, ax=ax[0])
+plot_acf(model_df["d_unemp"].dropna(), lags=24, ax=ax[1])
+
+plt.show()
+
+```
+
+The PACF plot shows autocorrelation at lages 1,6, and 7. Therefore they are included in the linear model. Further, two constants are added for dates 2020-05-01, 2021-12-01, where they have value 0 prior to the date, and 1 thereafter. 
+These two dates were derived from the data itself, eventhough COVID restrictions were lifted two months after. 
+
+```{python}
+model_df.loc[:,"COVID"] = (model_df.index > "2020-05-01").astype(int)
+model_df.loc[:,"lifted"] = (model_df.index > "2021-09-01").astype(int)
+
+model_df = model_df.dropna()
+
+model = ARIMA(model_df["d_unemp"].values, exog=model_df[["COVID","lifted"]], order=((1,6,7),0,0)).fit()
+
+model.summary()
+
+```
+
+The regression results shows a clear significance for both dates with coefficient for COVID restrinctions 33.51, and -30.16 for the lifted restriction. Interesting point is that the sum of these two coefficients is 3.35, indicating that the levels of application count is stablized at higher value compared to pre-COVID time. The residuals do not show any autoregressive behaviour, and therefore, the model is reliable. 
+
+# Start-up grant for employed (count)
+
+```{python}
+model_df = data.copy()
+model_df.loc[:,"d_emp"] = model_df["Start-up grant for non-unemployed"].diff()
+model_df = model_df.dropna()
+
+fig, ax = plt.subplots(1,2, figsize=(12, 4))
+
+plot_pacf(model_df["d_emp"].dropna(), lags=24, ax=ax[0])
+plot_acf(model_df["d_emp"].dropna(), lags=24, ax=ax[1])
+
+plt.show()
+
+```
+
+```{python}
+model_df.loc[:,"COVID"] = (model_df.index > "2020-05-01").astype(int)
+model_df.loc[:,"lifted"] = (model_df.index > "2021-09-01").astype(int)
+model = ARIMA(model_df["d_emp"].values, exog=model_df[["COVID","lifted"]], order=((1,2,6,7),0,[2])).fit()
+
+model.summary()
+
+```
+
+```{python}
+fig, ax = plt.subplots(1,2, figsize=(12, 4))
+
+plot_pacf(model.resid, lags=24, ax=ax[0])
+plot_acf(model.resid, lags=24, ax=ax[1])
+
+plt.show()
+```
+
+
+The ACF and PACF plots of model residuals do not show any autoregressive behaviour. Therefore the model is fitting properly.
