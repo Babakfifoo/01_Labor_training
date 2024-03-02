@@ -8,7 +8,6 @@ __pycache__/
 .snapshots/
 .quarto/
 .idea/
-*.ipynb_checkpoints/
 
 # Datas:
 
