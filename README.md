@@ -1,3 +1,7 @@
+# info
+
+project is using Quarto to generate reports and output.
+
 # startup grant - a financial support tool to start entrepreneurship.
 
 Hypothesis: This financial support does not provide sufficient support to the startups for unemployed individuals.
