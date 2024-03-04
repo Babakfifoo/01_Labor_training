@@ -1,24 +1,21 @@
-# info
-
-project is using Quarto to generate reports and output.
-
-# startup grant - a financial support tool to start entrepreneurship.
+# startup grant - a financial support tool to start entrepreneurship
 
 Hypothesis: This financial support does not provide sufficient support to the startups for unemployed individuals.
 
 We have statistics on how many people sign up for startup grant separated by their employment status.
 
-Data sources:
+## Notebooks:
+  1. Impact of COVID on the application count: [HERE](./notebooks/COVID_time.ipynb)
 
-[Startup application data](https://pxdata.stat.fi/PxWeb/pxweb/en/StatFin/StatFin__tyonv/statfin_tyonv_pxt_12u6.px/)
 
-Selections:
+## Data sources:
+  1. [Startup application data](https://pxdata.stat.fi/PxWeb/pxweb/en/StatFin/StatFin__tyonv/statfin_tyonv_pxt_12u6.px/) : [Query](./queries/startup_total.json)
 
-1. Employment activity periods started during the month (number)
-2. Whole country
-3. Total
-4. Total
-5. Startup grant for non-unemployed + Startup grant for unemployed
-6. 2019 January – 2023 December
 
-Analysis notebook: [HERE](./results/notebooks/COVID_time_analysis.html)
+
+
+
+___
+> [!NOTE]  
+> Quarto YAML file is included in the project, and notebooks for publication.
+
