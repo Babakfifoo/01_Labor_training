@@ -1,0 +1,74 @@
+{
+    "query": [
+        {
+            "code": "Alue",
+            "selection": {
+                "filter": "item",
+                "values": [
+                    "SSS"
+                ]
+            }
+        },
+        {
+            "code": "Sukupuoli",
+            "selection": {
+                "filter": "item",
+                "values": [
+                    "SSS"
+                ]
+            }
+        },
+        {
+            "code": "Ikäryhmitys",
+            "selection": {
+                "filter": "item",
+                "values": [
+                    "SSS"
+                ]
+            }
+        },
+        {
+            "code": "Työllistämisen laji",
+            "selection": {
+                "filter": "item",
+                "values": [
+                    "61",
+                    "62",
+                    "65"
+                ]
+            }
+        },
+        {
+            "code": "Ammattiryhmä",
+            "selection": {
+                "filter": "item",
+                "values": [
+                    "SSS",
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9",
+                    "0",
+                    "X"
+                ]
+            }
+        },
+        {
+            "code": "Tiedot",
+            "selection": {
+                "filter": "item",
+                "values": [
+                    "SIJOITYHT"
+                ]
+            }
+        }
+    ],
+    "response": {
+        "format": "json-stat2"
+    }
+}

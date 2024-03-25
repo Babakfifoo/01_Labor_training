@@ -1,0 +1,16 @@
+{
+    "query": [
+        {
+            "code": "Alue",
+            "selection": {
+                "filter": "item",
+                "values": [
+                    "SSS"
+                ]
+            }
+        }
+    ],
+    "response": {
+        "format": "json-stat2"
+    }
+}
