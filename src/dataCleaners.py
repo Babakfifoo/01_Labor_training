@@ -1,5 +1,5 @@
 import sys
-
+from typing import Dict
 sys.path.append("../src/")
 import pandas as pd
 
@@ -9,18 +9,18 @@ def gen_end_of_month_dates(series: pd.Series, format="%YM%m") -> pd.Series:
 
     Args:
         series (pd.Series): pandas series with Monthly string notation
-        format (str, optional): _description_. Defaults to "%YM%m".
+        format (str, optional): Defaults to "%YM%m".
 
     Returns:
         pd.Series: series of dates.
     """
     result = pd.to_datetime(series, format="%YM%m", errors="raise").apply(
         lambda x: (x + pd.offsets.MonthEnd(0))
-    ).dt.date
+    )
     return result
 
 
-def cleanSturtupGrants(data: pd.DataFrame) -> tuple[dict, pd.DataFrame]:
+def cleanSturtupGrants(data: pd.DataFrame) -> tuple[Dict[str,str], pd.DataFrame]:
     """Cleaning start-up grants raw data
 
     Args:
@@ -31,8 +31,8 @@ def cleanSturtupGrants(data: pd.DataFrame) -> tuple[dict, pd.DataFrame]:
     """
     # THE DATA LABELS ---------------------------------------------------------
     columns_labels = dict(
-        grantUnemp="Start-up grant for non-unemployed",
-        grantEmp="Start-up grant for unemployed",
+        grantEmp="Start-up grant for non-unemployed",
+        grantUnemp="Start-up grant for unemployed",
         grantLms="Start-up grant with lms",
     )
     # -------------------------------------------------------------------------
@@ -48,7 +48,7 @@ def cleanSturtupGrants(data: pd.DataFrame) -> tuple[dict, pd.DataFrame]:
     return (columns_labels, data)
 
 
-def cleanEmploymentRate(data: pd.DataFrame) -> tuple[dict, pd.DataFrame]:
+def cleanEmploymentRate(data: pd.DataFrame) -> tuple[Dict[str,str], pd.DataFrame]:
     """Cleaning employment rate raw data
 
     Args:
