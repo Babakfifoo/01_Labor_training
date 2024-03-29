@@ -1,7 +1,7 @@
 import sys
 import os
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Dict, Optional, Callable, Tuple
 
 import dataCleaners
@@ -21,7 +21,7 @@ def load_json_query(fpath: str) -> dict:
     return(query)
 
 
-def load_raw_data(APIConfig) -> pd.DataFrame:
+def _load_raw_data(APIConfig) -> pd.DataFrame:
     """This functionality allows for loading the data using the data class itself
     This method is coded to make the code readable in action.
     The resulted data is in raw format, obtained from the Statistics Finland API.
@@ -48,7 +48,7 @@ def load_raw_data(APIConfig) -> pd.DataFrame:
         data = pd.DataFrame(pyjstat.Dataset.read(r.text).write("dataframe"))
         data.to_parquet(path) 
         
-    print("{title} Data loaded.\n\n".format(title = APIConfig.title))
+    print("{title} Data loaded.\n".format(title = APIConfig.title))
     return data
     
 
@@ -59,13 +59,17 @@ class statfiAPIConfig():
     title: str # Name of the data. It is based on the data itself and the query
     url: str # URL of the API for getting the data. This is not the Data source page!
     query: str # A Dictionary made from JSON query tailored for the project.
-    raw_data: Optional[pd.DataFrame] = None
-    labels: Optional[Dict[str,str]] = None
-    cleaned_data: Optional[pd.DataFrame] = None
+    raw_data: pd.DataFrame = field(default_factory=pd.DataFrame)
+    labels: Dict[str,str] = field(default_factory=dict)
+    cleaned_data: pd.DataFrame = field(default_factory=pd.DataFrame)
     data_processing_function: Optional[Callable[[pd.DataFrame], Tuple[Dict[str,str], pd.DataFrame]]] = None # cleaning function added here
     
     def load(self) -> None:
-        self.raw_data = load_raw_data(self)
+        """This method loads the data into the assigned attributes. 
+        Loading the data may be time consuming depending on the data itself, internet connectivity and the hardware.
+        This module allows to load the data on demand.
+        """        
+        self.raw_data = _load_raw_data(self)
         if self.data_processing_function is not None:
             self.labels, self.cleaned_data = self.data_processing_function(self.raw_data)
 
